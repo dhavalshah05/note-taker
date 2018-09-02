@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.itgosolutions.notetaker.R;
-import com.itgosolutions.notetaker.model.NoteEntity;
+import com.itgosolutions.notetaker.database.NoteEntity;
 
 import java.util.List;
 

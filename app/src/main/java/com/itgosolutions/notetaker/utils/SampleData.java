@@ -1,6 +1,6 @@
 package com.itgosolutions.notetaker.utils;
 
-import com.itgosolutions.notetaker.model.NoteEntity;
+import com.itgosolutions.notetaker.database.NoteEntity;
 
 import java.util.ArrayList;
 import java.util.Calendar;

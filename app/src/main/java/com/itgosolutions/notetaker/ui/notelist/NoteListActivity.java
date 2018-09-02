@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.itgosolutions.notetaker.R;
-import com.itgosolutions.notetaker.model.NoteEntity;
+import com.itgosolutions.notetaker.database.NoteEntity;
 import com.itgosolutions.notetaker.ui.noteedit.NoteEditActivity;
 import com.itgosolutions.notetaker.utils.SampleData;
 
