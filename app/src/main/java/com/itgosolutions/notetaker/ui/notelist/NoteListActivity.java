@@ -1,18 +1,20 @@
 package com.itgosolutions.notetaker.ui.notelist;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.itgosolutions.notetaker.R;
 import com.itgosolutions.notetaker.database.NoteEntity;
 import com.itgosolutions.notetaker.ui.noteedit.NoteEditActivity;
-import com.itgosolutions.notetaker.utils.SampleData;
+import com.itgosolutions.notetaker.viewmodel.NoteListViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +28,9 @@ public class NoteListActivity extends AppCompatActivity {
     @BindView(R.id.note_list_recycler_view)
     RecyclerView mNoteListRecyclerView;
 
-    private List<NoteEntity> notesData = new ArrayList<>();
+    private NoteListViewModel mViewModel;
     private NoteListAdapter mAdapter;
+    private List<NoteEntity> mNotes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +40,27 @@ public class NoteListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
+        initViewModel();
         initNoteList();
 
-        notesData.addAll(SampleData.getNotes());
-        for (NoteEntity note :
-                notesData) {
-            Log.i("NoteTaker", note.toString());
-        }
+        getAllNotes();
+    }
+
+    private void getAllNotes() {
+        mViewModel.getAllNotes().observe(this, new Observer<List<NoteEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<NoteEntity> noteEntities) {
+                mNotes.clear();
+                if (noteEntities != null)
+                    mNotes.addAll(noteEntities);
+
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void initViewModel() {
+        mViewModel = ViewModelProviders.of(this).get(NoteListViewModel.class);
     }
 
     @OnClick(R.id.fab)
@@ -56,29 +73,30 @@ public class NoteListActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mNoteListRecyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new NoteListAdapter(notesData);
+        mAdapter = new NoteListAdapter(mNotes);
         mNoteListRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_note_list, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add_sample_data) {
+            addSampleData();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addSampleData() {
+        mViewModel.addSampleData();
     }
 }
