@@ -1,20 +1,17 @@
 package com.itgosolutions.notetaker.ui.notelist;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.itgosolutions.notetaker.R;
 import com.itgosolutions.notetaker.model.NoteEntity;
-import com.itgosolutions.notetaker.ui.notelist.NoteListAdapter;
+import com.itgosolutions.notetaker.ui.noteedit.NoteEditActivity;
 import com.itgosolutions.notetaker.utils.SampleData;
 
 import java.util.ArrayList;
@@ -22,6 +19,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class NoteListActivity extends AppCompatActivity {
 
@@ -35,26 +33,22 @@ public class NoteListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
         initNoteList();
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         notesData.addAll(SampleData.getNotes());
         for (NoteEntity note :
                 notesData) {
             Log.i("NoteTaker", note.toString());
         }
+    }
+
+    @OnClick(R.id.fab)
+    void fabClickHandler() {
+        NoteEditActivity.start(this);
     }
 
     private void initNoteList() {

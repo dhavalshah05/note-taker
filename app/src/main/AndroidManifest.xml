@@ -19,6 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.noteedit.NoteEditActivity"
+            android:label="@string/title_activity_note_edit"
+            android:parentActivityName=".ui.notelist.NoteListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.itgosolutions.notetaker.ui.notelist.NoteListActivity" />
+        </activity>
     </application>
 
 </manifest>
