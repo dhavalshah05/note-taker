@@ -37,4 +37,13 @@ public class AppRepository {
     public LiveData<List<NoteEntity>> getAllNotes() {
         return mDb.getNoteDao().getAll();
     }
+
+    public void deleteAllNotes() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mDb.getNoteDao().deleteAll();
+            }
+        });
+    }
 }
