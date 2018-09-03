@@ -1,6 +1,7 @@
 package com.itgosolutions.notetaker.ui.notelist;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +18,16 @@ import butterknife.ButterKnife;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteListViewHolder> {
 
-    private final List<NoteEntity> mNotes;
+    interface NoteClickListener {
+        void onNoteEditButtonClicked(NoteEntity note);
+    }
 
-    public NoteListAdapter(List<NoteEntity> mNotes) {
+    private final List<NoteEntity> mNotes;
+    private final NoteClickListener mListener;
+
+    NoteListAdapter(List<NoteEntity> mNotes, NoteClickListener listener) {
         this.mNotes = mNotes;
+        this.mListener = listener;
     }
 
     @NonNull
@@ -34,6 +41,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteLi
     public void onBindViewHolder(@NonNull NoteListViewHolder holder, int position) {
         final NoteEntity note = mNotes.get(position);
         holder.bindNote(note);
+
+        holder.mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null)
+                    mListener.onNoteEditButtonClicked(note);
+            }
+        });
     }
 
     @Override
@@ -44,6 +59,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteLi
     class NoteListViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.text_view)
         TextView mText;
+
+        @BindView(R.id.fab)
+        FloatingActionButton mFab;
 
         NoteListViewHolder(View itemView) {
             super(itemView);

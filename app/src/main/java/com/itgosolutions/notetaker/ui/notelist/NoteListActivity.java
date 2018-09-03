@@ -23,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NoteListActivity extends AppCompatActivity {
+public class NoteListActivity extends AppCompatActivity implements NoteListAdapter.NoteClickListener {
 
     @BindView(R.id.note_list_recycler_view)
     RecyclerView mNoteListRecyclerView;
@@ -65,7 +65,7 @@ public class NoteListActivity extends AppCompatActivity {
 
     @OnClick(R.id.fab)
     void fabClickHandler() {
-        NoteEditActivity.start(this);
+        NoteEditActivity.startWithCreate(this);
     }
 
     private void initNoteList() {
@@ -73,7 +73,7 @@ public class NoteListActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mNoteListRecyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new NoteListAdapter(mNotes);
+        mAdapter = new NoteListAdapter(mNotes, this);
         mNoteListRecyclerView.setAdapter(mAdapter);
     }
 
@@ -105,5 +105,10 @@ public class NoteListActivity extends AppCompatActivity {
 
     private void addSampleData() {
         mViewModel.addSampleData();
+    }
+
+    @Override
+    public void onNoteEditButtonClicked(NoteEntity note) {
+        NoteEditActivity.startWithEdit(this, note.getId());
     }
 }
