@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -24,7 +25,7 @@ public class NoteEditActivity extends AppCompatActivity {
     @BindView(R.id.note_text)
     TextView mNoteText;
     private NoteEditViewModel mViewModel;
-    private int noteId;
+    private int mNoteId;
 
     public static void startWithEdit(Context context, int noteId) {
         Intent intent = new Intent(context, NoteEditActivity.class);
@@ -50,12 +51,12 @@ public class NoteEditActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            noteId = bundle.getInt(NOTE_ID);
+            mNoteId = bundle.getInt(NOTE_ID);
         }
-        getSupportActionBar().setTitle(noteId == 0 ? "New Note" : "Edit Note");
+        getSupportActionBar().setTitle(mNoteId == 0 ? "New Note" : "Edit Note");
         initViewModel();
-        if (noteId > 0) {
-            mViewModel.getNoteById(noteId);
+        if (mNoteId > 0) {
+            mViewModel.getNoteById(mNoteId);
         }
     }
 
@@ -65,18 +66,32 @@ public class NoteEditActivity extends AppCompatActivity {
         mViewModel.getNoteLiveData().observe(this, new Observer<NoteEntity>() {
             @Override
             public void onChanged(@Nullable NoteEntity noteEntity) {
-                if (noteEntity != null && noteId > 0)
+                if (noteEntity != null && mNoteId > 0)
                     bindNote(noteEntity);
             }
         });
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (mNoteId > 0)
+            getMenuInflater().inflate(R.menu.menu_note_edit, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             saveNoteAndFinish(mNoteText.getText().toString());
+        } else if (item.getItemId() == R.id.action_delete) {
+            deleteNoteAndFinish();
         }
         return true;
+    }
+
+    private void deleteNoteAndFinish() {
+        mViewModel.deleteNote();
+        finish();
     }
 
     private void saveNoteAndFinish(String noteText) {

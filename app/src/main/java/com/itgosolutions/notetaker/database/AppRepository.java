@@ -54,4 +54,8 @@ public class AppRepository {
     public void saveNote(NoteEntity note) {
         mDb.getNoteDao().insertNote(note);
     }
+
+    public void deleteNote(NoteEntity note) {
+        mDb.getNoteDao().deleteNote(note);
+    }
 }

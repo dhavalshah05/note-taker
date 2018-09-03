@@ -61,4 +61,14 @@ public class NoteEditViewModel extends AndroidViewModel {
         });
 
     }
+
+    public void deleteNote() {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (mNoteLiveData.getValue() != null)
+                    mRepository.deleteNote(mNoteLiveData.getValue());
+            }
+        });
+    }
 }
