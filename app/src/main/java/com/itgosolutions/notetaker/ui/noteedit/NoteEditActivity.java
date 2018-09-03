@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,16 +13,24 @@ import android.widget.TextView;
 
 import com.itgosolutions.notetaker.R;
 import com.itgosolutions.notetaker.database.NoteEntity;
+import com.itgosolutions.notetaker.ui.common.BaseActivity;
 import com.itgosolutions.notetaker.viewmodel.NoteEditViewModel;
+import com.itgosolutions.notetaker.viewmodel.ViewModelFactory;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NoteEditActivity extends AppCompatActivity {
+public class NoteEditActivity extends BaseActivity {
 
     private static final String NOTE_ID = "note_id";
     @BindView(R.id.note_text)
     TextView mNoteText;
+
+    @Inject
+    ViewModelFactory viewModelFactory;
+
     private NoteEditViewModel mViewModel;
     private int mNoteId;
 
@@ -47,6 +54,7 @@ public class NoteEditActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_check);
 
+        getActivityComponent().inject(this);
         ButterKnife.bind(this);
 
         Bundle bundle = getIntent().getExtras();
@@ -61,7 +69,7 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        mViewModel = ViewModelProviders.of(this).get(NoteEditViewModel.class);
+        mViewModel = ViewModelProviders.of(this, viewModelFactory).get(NoteEditViewModel.class);
 
         mViewModel.getNoteLiveData().observe(this, new Observer<NoteEntity>() {
             @Override

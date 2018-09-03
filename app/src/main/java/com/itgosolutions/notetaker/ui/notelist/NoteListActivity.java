@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,22 +12,29 @@ import android.view.MenuItem;
 
 import com.itgosolutions.notetaker.R;
 import com.itgosolutions.notetaker.database.NoteEntity;
+import com.itgosolutions.notetaker.ui.common.BaseActivity;
 import com.itgosolutions.notetaker.ui.noteedit.NoteEditActivity;
 import com.itgosolutions.notetaker.viewmodel.NoteListViewModel;
+import com.itgosolutions.notetaker.viewmodel.ViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NoteListActivity extends AppCompatActivity implements NoteListAdapter.NoteClickListener {
+public class NoteListActivity extends BaseActivity implements NoteListAdapter.NoteClickListener {
 
     @BindView(R.id.note_list_recycler_view)
     RecyclerView mNoteListRecyclerView;
 
+    @Inject
+    ViewModelFactory viewModelFactory;
     private NoteListViewModel mViewModel;
+
     private NoteListAdapter mAdapter;
     private List<NoteEntity> mNotes = new ArrayList<>();
 
@@ -39,6 +45,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteListAdapt
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getActivityComponent().inject(this);
         ButterKnife.bind(this);
         initViewModel();
         initNoteList();
@@ -60,7 +67,7 @@ public class NoteListActivity extends AppCompatActivity implements NoteListAdapt
     }
 
     private void initViewModel() {
-        mViewModel = ViewModelProviders.of(this).get(NoteListViewModel.class);
+        mViewModel = ViewModelProviders.of(this, viewModelFactory).get(NoteListViewModel.class);
     }
 
     @OnClick(R.id.fab)

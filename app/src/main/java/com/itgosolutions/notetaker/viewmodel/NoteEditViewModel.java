@@ -7,22 +7,24 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.itgosolutions.notetaker.database.AppRepository;
+import com.itgosolutions.notetaker.database.DatabaseRepo;
 import com.itgosolutions.notetaker.database.NoteEntity;
 
 import java.util.Date;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class NoteEditViewModel extends AndroidViewModel {
 
     private MutableLiveData<NoteEntity> mNoteLiveData = new MutableLiveData<>();
-    private AppRepository mRepository;
-    private Executor mExecutor = Executors.newSingleThreadExecutor();
+    private DatabaseRepo mRepo;
+    private Executor mExecutor;
 
-    public NoteEditViewModel(@NonNull Application application) {
+    public NoteEditViewModel(@NonNull Application application,
+                             DatabaseRepo repo,
+                             Executor executor) {
         super(application);
-        mRepository = AppRepository.getInstance(application);
+        mRepo = repo;
+        mExecutor = executor;
     }
 
     public LiveData<NoteEntity> getNoteLiveData() {
@@ -33,7 +35,7 @@ public class NoteEditViewModel extends AndroidViewModel {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                NoteEntity entity = mRepository.getNoteById(noteId);
+                NoteEntity entity = mRepo.getNoteById(noteId);
                 mNoteLiveData.postValue(entity);
             }
         });
@@ -56,7 +58,7 @@ public class NoteEditViewModel extends AndroidViewModel {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                mRepository.saveNote(note);
+                mRepo.saveNote(note);
             }
         });
 
@@ -67,7 +69,7 @@ public class NoteEditViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 if (mNoteLiveData.getValue() != null)
-                    mRepository.deleteNote(mNoteLiveData.getValue());
+                    mRepo.deleteNote(mNoteLiveData.getValue());
             }
         });
     }

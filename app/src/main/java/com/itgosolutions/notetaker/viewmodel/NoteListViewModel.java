@@ -5,28 +5,44 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.itgosolutions.notetaker.database.AppRepository;
+import com.itgosolutions.notetaker.database.DatabaseRepo;
 import com.itgosolutions.notetaker.database.NoteEntity;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 public class NoteListViewModel extends AndroidViewModel {
-    private AppRepository mRepository;
 
-    public NoteListViewModel(@NonNull Application application) {
+    private DatabaseRepo mRepo;
+    private Executor mExecutor;
+
+    public NoteListViewModel(@NonNull Application application,
+                             DatabaseRepo databaseRepo,
+                             Executor executor) {
         super(application);
-        mRepository = AppRepository.getInstance(application.getApplicationContext());
+        mRepo = databaseRepo;
+        mExecutor = executor;
     }
 
     public void addSampleData() {
-        mRepository.addSampleData();
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mRepo.addSampleData();
+            }
+        });
     }
 
     public LiveData<List<NoteEntity>> getAllNotes() {
-        return mRepository.getAllNotes();
+        return mRepo.getAllNotes();
     }
 
     public void deleteAllNotes() {
-        mRepository.deleteAllNotes();
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mRepo.deleteAllNotes();
+            }
+        });
     }
 }
